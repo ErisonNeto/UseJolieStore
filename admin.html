@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#fbf8f5">
+  <title>Admin | Use Jolie</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <a class="admin-brand auth-brand" href="index.html">Jolie</a>
+      <span class="eyebrow">[ ADMIN ]</span>
+      <h1>ENTRAR NO<br><em>CATÁLOGO.</em></h1>
+      <p>Entre com o e-mail autorizado para administrar as peças da Use Jolie.</p>
+      <form id="loginForm" class="auth-form">
+        <label class="field"><span>E-mail</span><input id="loginEmail" type="email" autocomplete="email" required placeholder="seu@email.com"></label>
+        <label class="field"><span>Senha</span><input id="loginPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="••••••••"></label>
+        <button class="btn btn-dark" type="submit" id="loginButton">Entrar</button>
+        <button class="btn btn-ghost" type="button" id="signupButton">Criar primeiro acesso</button>
+      </form>
+      <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      <small>O cadastro só recebe acesso administrativo quando o e-mail foi autorizado previamente.</small>
+    </div>
+  </section>
+
+  <div id="adminApp" hidden>
+    <header class="admin-header">
+      <a class="admin-brand" href="index.html" aria-label="Voltar para a loja">Jolie</a>
+      <div class="admin-header-copy"><strong>Painel administrativo</strong><span id="adminEmail">Catálogo da Use Jolie</span></div>
+      <div class="admin-header-actions">
+        <span class="connection-pill" id="connectionPill" data-state="online">Supabase conectado</span>
+        <button class="btn btn-ghost" id="logoutButton" type="button">Sair</button>
+        <a class="btn btn-dark" href="index.html" target="_blank" rel="noopener">Ver loja ↗</a>
+      </div>
+    </header>
+
+    <main class="admin-shell">
+      <section class="admin-hero" aria-labelledby="admin-title">
+        <div><span class="eyebrow">[ CATÁLOGO ]</span><h1 id="admin-title">GERENCIE AS<br>PEÇAS PELO<br><em>CELULAR.</em></h1></div>
+        <p>Cadastre fotos, preços, tamanhos, cores, estampas, parcelamento e etiquetas. Ao salvar, a alteração fica disponível no catálogo sem editar código.</p>
+      </section>
+
+      <section class="stats-grid" aria-label="Resumo do catálogo">
+        <article><span>Publicadas</span><strong id="statActive">0</strong></article>
+        <article><span>Lançamentos</span><strong id="statLaunches">0</strong></article>
+        <article><span>Esgotadas</span><strong id="statSoldOut">0</strong></article>
+        <article><span>Total</span><strong id="statTotal">0</strong></article>
+      </section>
+
+      <section class="workspace">
+        <aside class="catalog-panel" aria-label="Produtos cadastrados">
+          <div class="panel-head"><div><span class="eyebrow">[ PRODUTOS ]</span><h2>Catálogo</h2></div><button class="btn btn-dark btn-small" id="newProduct" type="button">+ Nova peça</button></div>
+          <label class="search-box" for="productSearch"><span>⌕</span><input id="productSearch" type="search" placeholder="Buscar peça, categoria, cor..."></label>
+          <div class="list-toolbar">
+            <select id="statusFilter" aria-label="Filtrar por status"><option value="all">Todos</option><option value="published">Publicadas</option><option value="sold_out">Esgotadas</option><option value="draft">Rascunhos</option><option value="hidden">Ocultas</option><option value="launch">Lançamentos</option></select>
+            <span id="listCount">0 itens</span>
+          </div>
+          <div class="product-list" id="productList"></div>
+        </aside>
+
+        <section class="editor-panel">
+          <div class="empty-editor" id="emptyEditor"><span class="empty-dot"></span><h2>Selecione uma peça</h2><p>Escolha um item ou cadastre uma nova peça.</p><button class="btn btn-dark" id="emptyNewProduct" type="button">Cadastrar peça</button></div>
+          <form id="productForm" class="product-form" hidden novalidate>
+            <div class="editor-head">
+              <div><span class="eyebrow">[ EDIÇÃO ]</span><h2 id="editorTitle">Nova peça</h2><p id="editorSubtitle">Preencha os dados do catálogo.</p></div>
+              <div class="editor-actions-top"><button class="btn btn-ghost" id="duplicateProduct" type="button">Duplicar</button><button class="btn btn-danger" id="deleteProduct" type="button">Excluir</button></div>
+            </div>
+
+            <div class="form-section"><div class="section-title"><span>01</span><div><h3>Informações</h3><p>Dados principais da peça.</p></div></div>
+              <div class="form-grid two">
+                <label class="field span-2"><span>Nome *</span><input id="productName" required maxlength="90" placeholder="Ex.: Vestido Perla"></label>
+                <label class="field"><span>Categoria *</span><select id="productCategory" required><option value="">Selecione</option><option value="conjuntos">Conjuntos</option><option value="tops">Tops</option><option value="regatas">Regatas</option><option value="vestidos">Vestidos</option><option value="shorts">Shorts</option><option value="saias">Saias</option><option value="calcas">Calças</option><option value="acessorios">Acessórios</option><option value="outros">Outros</option></select></label>
+                <label class="field"><span>Valor *</span><div class="money-input"><span>R$</span><input id="productPrice" type="number" min="0" step="0.01" inputmode="decimal" required></div></label>
+                <label class="field span-2"><span>Descrição</span><textarea id="productDescription" rows="3" maxlength="300" placeholder="Todo forrado · veste 36/40..."></textarea></label>
+                <label class="field"><span>Ordem</span><input id="productOrder" type="number" min="0" step="1" value="100"></label>
+              </div>
+            </div>
+
+            <div class="form-section"><div class="section-title"><span>02</span><div><h3>Variações</h3><p>Você pode cadastrar várias opções separadas por vírgula.</p></div></div>
+              <div class="form-grid two">
+                <label class="field"><span>Tamanhos</span><input id="productSizes" placeholder="P, M, G, 36/40"></label>
+                <label class="field"><span>Cores</span><input id="productColors" placeholder="Rosa bb, Preto, Azul bb"></label>
+                <label class="field span-2"><span>Estampas / versões</span><input id="productPatterns" placeholder="Floral azul, Floral rosa"></label>
+              </div>
+            </div>
+
+            <div class="form-section"><div class="section-title"><span>03</span><div><h3>Venda e destaque</h3><p>Parcelamento, disponibilidade e etiquetas.</p></div></div>
+              <div class="form-grid three">
+                <label class="field"><span>Parcelas</span><select id="productInstallments"><option value="1">À vista</option><option value="2" selected>2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option><option value="10">10x</option><option value="12">12x</option></select></label>
+                <label class="toggle-card"><input id="interestFree" type="checkbox" checked><span><strong>Sem juros</strong><small>Exibe o parcelamento.</small></span></label>
+                <label class="field"><span>Status</span><select id="productStatus"><option value="published">Publicado</option><option value="sold_out">Esgotado (bloqueia a compra)</option><option value="draft">Rascunho</option><option value="hidden">Oculto</option></select></label>
+                <label class="toggle-card"><input id="productLaunch" type="checkbox"><span><strong>Lançamento</strong><small>Fica sempre primeiro.</small></span></label>
+                <label class="toggle-card"><input id="productNew" type="checkbox"><span><strong>Novo</strong><small>Marca a peça como novidade.</small></span></label>
+                <label class="toggle-card"><input id="productFeatured" type="checkbox"><span><strong>Destaque</strong><small>Peça em evidência.</small></span></label>
+                <label class="field"><span>Legenda</span><input id="badgeText" maxlength="28" placeholder="Lançamento, Nova cor..."></label>
+                <label class="field"><span>Cor da legenda</span><select id="badgeTone"><option value="pink">Rosa Jolie</option><option value="soft">Azul suave</option><option value="dark">Preta</option></select></label>
+              </div>
+            </div>
+
+            <div class="form-section"><div class="section-title"><span>04</span><div><h3>Foto</h3><p>Escolha da galeria ou tire uma foto pelo celular.</p></div></div>
+              <div class="image-editor">
+                <div class="image-preview" id="imagePreview"><span>Sem foto</span></div>
+                <div class="image-controls">
+                  <label class="upload-box" for="productImage"><strong>Escolher foto</strong><span>JPG, PNG ou WEBP · até 10 MB</span><input id="productImage" type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden></label>
+                  <p id="imageFileName">Nenhum arquivo selecionado.</p>
+                </div>
+              </div>
+            </div>
+
+            <article class="preview-card" id="previewCard"></article>
+            <footer class="editor-footer"><div class="publish-note"><strong id="publishState">Pronto para salvar.</strong><span>As alterações ficam no Supabase e aparecem no site automaticamente.</span></div><div class="footer-actions"><button class="btn btn-ghost" id="cancelEdit" type="button">Cancelar</button><button class="btn btn-dark btn-save" id="saveProduct" type="submit">Salvar peça</button></div></footer>
+          </form>
+        </section>
+      </section>
+    </main>
+  </div>
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="admin.js?v=20260819-login2"></script>
+</body>
+</html>
